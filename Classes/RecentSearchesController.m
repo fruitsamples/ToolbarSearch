@@ -13,7 +13,7 @@
  
  The view controller has a delegate that it notifies if row in the table view is selected.
  
-  Version: 1.2
+  Version: 1.3
  
  Disclaimer: IMPORTANT:  This Apple software is supplied to you by Apple
  Inc. ("Apple") in consideration of your agreement to the following

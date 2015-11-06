@@ -4,7 +4,7 @@
  Abstract: A view controller that manages a search bar and a recent searches controller.
  The view controller creates a search bar to place in a tool bar. When the user commences a search, a recent searches controller is displayed in a popover.
  
-  Version: 1.2
+  Version: 1.3
  
  Disclaimer: IMPORTANT:  This Apple software is supplied to you by Apple
  Inc. ("Apple") in consideration of your agreement to the following
@@ -175,9 +175,28 @@
     return YES;
 }
 
+- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration {
+    // hide the popover while rotating
+    [self.recentSearchesPopoverController dismissPopoverAnimated:NO];
+}
+
+- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation {
+    // bring back the popover after rotating
+    [self.recentSearchesPopoverController presentPopoverFromRect:self.searchBar.bounds
+                                                          inView:self.searchBar
+                                        permittedArrowDirections:UIPopoverArrowDirectionAny
+                                                        animated:NO];
+}
+
 - (void)viewDidUnload {
+    [super viewDidUnload];
+    
     self.recentSearchesController = nil;
     self.recentSearchesPopoverController = nil;
+    
+    self.toolbar = nil;
+    self.searchBar = nil;
+    self.progressLabel = nil;
 }
 
 

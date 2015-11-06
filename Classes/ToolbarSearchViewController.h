@@ -4,7 +4,7 @@
  Abstract: A view controller that manages a search bar and a recent searches controller.
  The view controller creates a search bar to place in a tool bar. When the user commences a search, a recent searches controller is displayed in a popover.
  
-  Version: 1.2
+  Version: 1.3
  
  Disclaimer: IMPORTANT:  This Apple software is supplied to you by Apple
  Inc. ("Apple") in consideration of your agreement to the following
@@ -64,7 +64,7 @@
 }
 
 @property (nonatomic, retain) IBOutlet UIToolbar *toolbar;
-@property (nonatomic, retain) IBOutlet UISearchBar *searchBar;
+@property (nonatomic, retain) UISearchBar *searchBar;
 
 @property (nonatomic, retain) RecentSearchesController *recentSearchesController;
 @property (nonatomic, retain) UIPopoverController *recentSearchesPopoverController;

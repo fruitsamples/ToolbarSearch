@@ -33,7 +33,10 @@ A simple application delegate to display the application's window.
 ===========================================================================
 CHANGES FROM PREVIOUS VERSIONS:
 
-Version 1.1
+Version 1.3
+- viewDidUnload now releases IBOutlets, added localization support, fixed rotation layout bug.
+
+Version 1.2
 - Prevented tap in search bar from dismissing popover. Added presentation of an alert sheet when the user taps the Clear Recents button. 
 
 Version 1.1
