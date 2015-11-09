@@ -1,4 +1,3 @@
-
 /*
      File: RecentSearchesController.h
  Abstract: A table view controller to manage and display a list of recent search strings.
@@ -13,7 +12,7 @@
  
  The view controller has a delegate that it notifies if row in the table view is selected.
  
-  Version: 1.3
+  Version: 1.4
  
  Disclaimer: IMPORTANT:  This Apple software is supplied to you by Apple
  Inc. ("Apple") in consideration of your agreement to the following
@@ -53,7 +52,7 @@
  STRICT LIABILITY OR OTHERWISE, EVEN IF APPLE HAS BEEN ADVISED OF THE
  POSSIBILITY OF SUCH DAMAGE.
  
- Copyright (C) 2010 Apple Inc. All Rights Reserved.
+ Copyright (C) 2011 Apple Inc. All Rights Reserved.
  
  */
 
@@ -78,11 +77,15 @@ extern NSString *RecentSearchesKey;
     NSArray *displayedRecentSearches;
     
     UIBarButtonItem *clearButtonItem;
+    
+    UIActionSheet *confirmSheet;
 }
 
 @property (nonatomic, assign) id <RecentSearchesDelegate> delegate;
 @property (nonatomic, retain) NSArray *recentSearches;
 @property (nonatomic, retain) NSArray *displayedRecentSearches;
+
+@property (nonatomic, retain) UIActionSheet *confirmSheet;
 
 @property (nonatomic, retain) UIBarButtonItem *clearButtonItem;
 

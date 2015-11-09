@@ -1,6 +1,5 @@
-
 /*
-     File: RecentSearchesController.m
+     File: RecentSearchesController.m 
  Abstract: A table view controller to manage and display a list of recent search strings.
  The search strings are stored in NSUserDefaults to maintain the list between launches of the application.
  The view controller manages two arrays:
@@ -12,67 +11,66 @@
  The table view displays the contents of the displayedRecentSearches array.
  
  The view controller has a delegate that it notifies if row in the table view is selected.
- 
-  Version: 1.3
- 
- Disclaimer: IMPORTANT:  This Apple software is supplied to you by Apple
- Inc. ("Apple") in consideration of your agreement to the following
- terms, and your use, installation, modification or redistribution of
- this Apple software constitutes acceptance of these terms.  If you do
- not agree with these terms, please do not use, install, modify or
- redistribute this Apple software.
- 
- In consideration of your agreement to abide by the following terms, and
- subject to these terms, Apple grants you a personal, non-exclusive
- license, under Apple's copyrights in this original Apple software (the
- "Apple Software"), to use, reproduce, modify and redistribute the Apple
- Software, with or without modifications, in source and/or binary forms;
- provided that if you redistribute the Apple Software in its entirety and
- without modifications, you must retain this notice and the following
- text and disclaimers in all such redistributions of the Apple Software.
- Neither the name, trademarks, service marks or logos of Apple Inc. may
- be used to endorse or promote products derived from the Apple Software
- without specific prior written permission from Apple.  Except as
- expressly stated in this notice, no other rights or licenses, express or
- implied, are granted by Apple herein, including but not limited to any
- patent rights that may be infringed by your derivative works or by other
- works in which the Apple Software may be incorporated.
- 
- The Apple Software is provided by Apple on an "AS IS" basis.  APPLE
- MAKES NO WARRANTIES, EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION
- THE IMPLIED WARRANTIES OF NON-INFRINGEMENT, MERCHANTABILITY AND FITNESS
- FOR A PARTICULAR PURPOSE, REGARDING THE APPLE SOFTWARE OR ITS USE AND
- OPERATION ALONE OR IN COMBINATION WITH YOUR PRODUCTS.
- 
- IN NO EVENT SHALL APPLE BE LIABLE FOR ANY SPECIAL, INDIRECT, INCIDENTAL
- OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
- SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- INTERRUPTION) ARISING IN ANY WAY OUT OF THE USE, REPRODUCTION,
- MODIFICATION AND/OR DISTRIBUTION OF THE APPLE SOFTWARE, HOWEVER CAUSED
- AND WHETHER UNDER THEORY OF CONTRACT, TORT (INCLUDING NEGLIGENCE),
- STRICT LIABILITY OR OTHERWISE, EVEN IF APPLE HAS BEEN ADVISED OF THE
- POSSIBILITY OF SUCH DAMAGE.
- 
- Copyright (C) 2010 Apple Inc. All Rights Reserved.
- 
+  
+  Version: 1.4 
+  
+ Disclaimer: IMPORTANT:  This Apple software is supplied to you by Apple 
+ Inc. ("Apple") in consideration of your agreement to the following 
+ terms, and your use, installation, modification or redistribution of 
+ this Apple software constitutes acceptance of these terms.  If you do 
+ not agree with these terms, please do not use, install, modify or 
+ redistribute this Apple software. 
+  
+ In consideration of your agreement to abide by the following terms, and 
+ subject to these terms, Apple grants you a personal, non-exclusive 
+ license, under Apple's copyrights in this original Apple software (the 
+ "Apple Software"), to use, reproduce, modify and redistribute the Apple 
+ Software, with or without modifications, in source and/or binary forms; 
+ provided that if you redistribute the Apple Software in its entirety and 
+ without modifications, you must retain this notice and the following 
+ text and disclaimers in all such redistributions of the Apple Software. 
+ Neither the name, trademarks, service marks or logos of Apple Inc. may 
+ be used to endorse or promote products derived from the Apple Software 
+ without specific prior written permission from Apple.  Except as 
+ expressly stated in this notice, no other rights or licenses, express or 
+ implied, are granted by Apple herein, including but not limited to any 
+ patent rights that may be infringed by your derivative works or by other 
+ works in which the Apple Software may be incorporated. 
+  
+ The Apple Software is provided by Apple on an "AS IS" basis.  APPLE 
+ MAKES NO WARRANTIES, EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION 
+ THE IMPLIED WARRANTIES OF NON-INFRINGEMENT, MERCHANTABILITY AND FITNESS 
+ FOR A PARTICULAR PURPOSE, REGARDING THE APPLE SOFTWARE OR ITS USE AND 
+ OPERATION ALONE OR IN COMBINATION WITH YOUR PRODUCTS. 
+  
+ IN NO EVENT SHALL APPLE BE LIABLE FOR ANY SPECIAL, INDIRECT, INCIDENTAL 
+ OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
+ SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
+ INTERRUPTION) ARISING IN ANY WAY OUT OF THE USE, REPRODUCTION, 
+ MODIFICATION AND/OR DISTRIBUTION OF THE APPLE SOFTWARE, HOWEVER CAUSED 
+ AND WHETHER UNDER THEORY OF CONTRACT, TORT (INCLUDING NEGLIGENCE), 
+ STRICT LIABILITY OR OTHERWISE, EVEN IF APPLE HAS BEEN ADVISED OF THE 
+ POSSIBILITY OF SUCH DAMAGE. 
+  
+ Copyright (C) 2011 Apple Inc. All Rights Reserved. 
+  
  */
 
 #import "RecentSearchesController.h"
-
-
 
 NSString *RecentSearchesKey = @"RecentSearchesKey";
 
 
 @implementation RecentSearchesController
 
-@synthesize delegate, recentSearches, displayedRecentSearches, clearButtonItem;
+@synthesize delegate, recentSearches, displayedRecentSearches, clearButtonItem, confirmSheet;
 
 
 #pragma mark -
 #pragma mark View lifecycle
 
 - (void)viewDidLoad {
+    
     [super viewDidLoad];
 
     self.title = @"Recents";
@@ -147,7 +145,9 @@ NSString *RecentSearchesKey = @"RecentSearchesKey";
     self.recentSearches = mutableRecents;
     self.displayedRecentSearches = mutableRecents;
     [self.tableView reloadData];
-        
+    
+    [mutableRecents release];
+    
     // Ensure the clear button is enabled.
     clearButtonItem.enabled = YES;
 }
@@ -155,9 +155,9 @@ NSString *RecentSearchesKey = @"RecentSearchesKey";
 
 - (void)filterResultsUsingString:(NSString *)filterString {
 
-    /*
-     If the search string is zero-length, then restore the recent searches, otherwise create a predicate to filter the recent searches using the search string.
-     */
+    // If the search string is zero-length, then restore the recent searches,
+    // otherwise create a predicate to filter the recent searches using the search string.
+    //
     if ([filterString length] == 0) {
         self.displayedRecentSearches = recentSearches;
     }
@@ -174,30 +174,31 @@ NSString *RecentSearchesKey = @"RecentSearchesKey";
 - (void)showClearRecentsAlert:(id)sender {
     
     // If the user taps the Clear Recents button, present an action sheet to confirm.
-    UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:@"" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:@"Clear All Recents" otherButtonTitles:nil];
-    [actionSheet showInView:self.view];
-    [actionSheet release];
+    confirmSheet = [[UIActionSheet alloc] initWithTitle:@"" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:@"Clear All Recents" otherButtonTitles:nil];
+    [confirmSheet showInView:self.view];
 }
 
 
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
     
     if (buttonIndex == 0) {
-        /*
-         If the user chose to clear recents, remove the recents entry from user defaults, set the list to an empty array, and redisplay the table view.
-         */
+        // If the user chose to clear recents, remove the recents entry from user defaults,
+        // set the list to an empty array, and redisplay the table view.
+   
         [[NSUserDefaults standardUserDefaults] setObject:nil forKey:RecentSearchesKey];
         self.recentSearches = [NSArray array];
         self.displayedRecentSearches = [NSArray array];
         [self.tableView reloadData];
         clearButtonItem.enabled = NO;
     }
+    self.confirmSheet = nil;
 }
 
 
 #pragma mark Table view methods
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    
     return [displayedRecentSearches count];
 }
 
@@ -218,6 +219,7 @@ NSString *RecentSearchesKey = @"RecentSearchesKey";
 
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    
     // Notify the delegate if a row is selected.
     [delegate recentSearchesController:self didSelectString:[displayedRecentSearches objectAtIndex:indexPath.row]];
 }
@@ -227,9 +229,12 @@ NSString *RecentSearchesKey = @"RecentSearchesKey";
 #pragma mark Memory management
 
 - (void)dealloc {
+    
     [recentSearches release];
     [displayedRecentSearches release];
     [clearButtonItem release];
+    [confirmSheet release];
+    
     [super dealloc];
 }
 
